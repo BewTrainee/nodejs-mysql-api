@@ -30,36 +30,53 @@ const authController = {
     },
     login: async (req, res) => {
         try {
-            const { email, password } = req.body
-            const [user, ] = await pool.query("select * from users where email = ?", [email])
-            if (!user[0]) return res.json({ error: "Invalid email!" })
+            const { username, password } = req.body;
+            const last_ip = extractIPv4(req.ip);
             
-            const { password: hash, id, name } = user[0]
-
-            const check = await bcrypt.compare(password, hash)
-
-            if (check) {
-                const accessToken = jwt.sign({ userId: id }, '3812932sjad34&*@', { expiresIn: '1h' });
-                return res.json({ 
-                    accessToken,
-                    data: { 
-                        userId: id,
-                        name,
-                        email
-                    }
-                 })
-
+            // Call your authentication procedure and get user data
+            const [user] = await pool.query("CALL Auth(?,?,?);", [username, password, last_ip]);
+            
+            if (!user[0]) {
+                return res.json({ error: "Invalid email or password!" });
             }
+            // const has = await bcrypt.hash(password, 10)
+            // console.log(has)
+            // const { password: hash, uid, username } = has;
 
-            return res.json({ error: "Wrong password!" })
+            // Compare the provided password with the hashed password from the database
+            // const passwordMatch = await bcrypt.compare(password, hash);
+            const getPassword = await user[0]
+            const passwordMatch = await getPassword[0].password
+            // console.log(passwordMatch)
+
+            if (passwordMatch) {
+                // Generate a JWT token for authentication (uncomment this section if needed)
+                // const accessToken = jwt.sign({ userId: id }, 'your-secret-key', { expiresIn: '1h' });
+                // return res.json({ 
+                //     accessToken,
+                //     data: { 
+                //         userId: uid,
+                //         username,
+                //         // email
+                //     }
+                // });
+                
+                return res.json(user[0])
+            } else {
+                return res.json({ error: "Invalid password!" });
+            }
+            return res.json(user[0])
             
         } catch (error) {
-            console.log(error)
-            res.json({
-                error: error.message
-            })
+            console.error(error);
+            res.json({ error: error.message });
         }
     },
 }
-
+function extractIPv4(ipWithPrefix) {
+    if(ipWithPrefix.startsWith('::ffff:')) {
+      return ipWithPrefix.replace('::ffff:','');
+    }
+    return ipWithPrefix;
+  }
 module.exports = authController
