@@ -8,8 +8,10 @@ module.exports = (uploadDirectory) => {
     return {
         getAll: async (req, res) => {
             try {
-                const result = await pool.query("select * from posts order by create_at DESC")
-                res.json(result[0])
+                // const result = await pool.query("select posts.*,p.name,p.lastname,p.avatar from posts posts RIGHT JOIN profile p ON posts.uid = p.uid order by create_at DESC")
+                const result = await pool.query("call AllPostToCard();")
+                const data = result[0]
+                res.json(data[0])
             } catch (error) {
                 console.log(error)
                 res.json({
@@ -20,9 +22,13 @@ module.exports = (uploadDirectory) => {
         getById: async (req, res) => {
             try {
                 const { id } = req.params
-                const result = await pool.query("select * from posts where post_id = ?", [id])
+                const result = await pool.query("SELECT p.post_id,p.content FROM posts p where post_id = ?",[id])
+                const images = await pool.query("SELECT i.image_id,i.image_path FROM images i where post_id = ?",[id])
                 data = result[0]
-                res.json(data[0])
+                res.json({
+                    data: result[0],
+                    images: images[0]
+                })
             } catch (error) {
                 console.log(error)
                 res.json({
