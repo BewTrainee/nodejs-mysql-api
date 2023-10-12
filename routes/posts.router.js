@@ -4,7 +4,7 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
-const uploadDirectory = 'C:/laragon/www/uploads';
+const uploadDirectory = '/uploads';
 
 // Check if the upload directory exists; if not, create it
 if (!fs.existsSync(uploadDirectory)) {
