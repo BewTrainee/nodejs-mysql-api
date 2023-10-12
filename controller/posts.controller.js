@@ -4,7 +4,7 @@ const pool = require("../database/index")
 
 
 // const postsController =  {
-module.exports = (uploadDirectory) => {
+module.exports = () => {
     return {
         getAll: async (req, res) => {
             try {
