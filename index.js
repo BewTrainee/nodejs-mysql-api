@@ -4,6 +4,11 @@ const cors = require("cors")
 const http = require("http");
 const path = require('path');
 const server = http.createServer(app);
+
+import { createUploadthingExpressHandler } from "uploadthing/express";
+ 
+import { uploadRouter } from "./uploadthing";
+
 const io = require("socket.io")(server,{
     cors:{
         origin:"*",
@@ -35,6 +40,13 @@ const PORT = process.env.PORT || 5000
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
 })
+
+app.use(
+  "/api/uploadthing",
+  createUploadthingExpressHandler({
+    router: uploadRouter,
+  }),
+);
 
 
 io.on("connection", (socket) => {
