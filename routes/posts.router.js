@@ -49,8 +49,7 @@ const upload = multer({
   })
 });
 
-const postsController = require("../controller/posts.controller")(uploadDirectory)
-
+const postsController = require("../controller/posts.controller")
 router.get("/", postsController.getAll)
 router.get("/:id", postsController.getById)
 router.get("/user_PTC/:id", postsController.getByUid)
