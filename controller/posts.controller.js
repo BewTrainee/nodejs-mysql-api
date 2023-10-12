@@ -64,7 +64,7 @@ module.exports = (uploadDirectory) => {
         
               // Insert image paths into the images table
               for (const image of images) {
-                const ImagePath = path.join('https://nodejs-mysql-api-five.vercel.app/' ,image.filename)
+                const ImagePath = path.join('https://trade-d-api.onrender.com/' ,image.filename)
                 await pool.query(
                   'INSERT INTO images (post_id, image_path) VALUES (?, ?)',
                   [postId, ImagePath]
@@ -75,6 +75,7 @@ module.exports = (uploadDirectory) => {
                 status: 'success',
                 message: 'Post created with images',
               });
+              console.log(res.json)
             } catch (error) {
               console.log(error);
               res.json({
