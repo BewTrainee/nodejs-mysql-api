@@ -2,6 +2,7 @@ const express = require("express")
 const app = express()
 const cors = require("cors")
 const http = require("http");
+const path = require('path');
 const server = http.createServer(app);
 const io = require("socket.io")(server,{
     cors:{
@@ -16,6 +17,7 @@ require('dotenv').config()
 app.use(cors());
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
+app.use(express.static(path.join(__dirname, 'uploads')));
 
 const postsRouter = require('./routes/posts.router')
 const authRouter = require('./routes/auth.router')
